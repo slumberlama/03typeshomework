@@ -1,60 +1,61 @@
-/*  OTUS C-2023-07 Барашева Ангелина ДЗ к 3 занятию "Типы данных 1Ч.
-вход: путь файла
-выход: "Этот файл содержит zip-архив, список файлов которого: " и список файлов в архиве, если входной файл содержит zip файл,
-иначе: "Этот файл не содержит zip-архив"*/
+/*  OTUS C-2023-07 Р‘Р°СЂР°С€РµРІР° РђРЅРіРµР»РёРЅР° Р”Р— Рє 3 Р·Р°РЅСЏС‚РёСЋ "РўРёРїС‹ РґР°РЅРЅС‹С… 1Р§.
+РІС…РѕРґ: РїСѓС‚СЊ С„Р°Р№Р»Р°
+РІС‹С…РѕРґ: "Р­С‚РѕС‚ С„Р°Р№Р» СЃРѕРґРµСЂР¶РёС‚ zip-Р°СЂС…РёРІ, СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РєРѕС‚РѕСЂРѕРіРѕ: " Рё СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РІ Р°СЂС…РёРІРµ, РµСЃР»Рё РІС…РѕРґРЅРѕР№ С„Р°Р№Р» СЃРѕРґРµСЂР¶РёС‚ zip С„Р°Р№Р»,
+РёРЅР°С‡Рµ: "Р­С‚РѕС‚ С„Р°Р№Р» РЅРµ СЃРѕРґРµСЂР¶РёС‚ zip-Р°СЂС…РёРІ"*/
 #include <stdio.h>
 #include <stdlib.h>
-
-void is_it_contain_zip(void)
+#include <string.h>
+#include <locale.h>
+int is_it_contain_zip(void)
 {
-    setlocale(0, "rus");  // чтобы пользоваться русскими буквами в printf
-    FILE * file;    // сюда будет считан файл
-    unsigned char path[500]; // путь к файлу
-    int i, j;    // переменные для циклов for
-    unsigned char buf[4] = {0, 0, 0, 0};    // буфер для считывания EOCD, Central Directory Size и размера имени
-    unsigned char file_name[200];  // имя файла в архиве
-    char is_it_contain_zip_ = 0;	// признак содержит файл zip-архив или нет
-    int Central_Directory_size = 0; // размер центральной директории в байтах
-    unsigned char * Central_Directory;    // массив, содержащий Central Directory
-    int file_name_size; // размер имени файла в байтах
-    unsigned char CD[4] = {0x50, 0x4b, 0x01, 0x02};  // сигнатура для Central Directory Header
-    int a = 0;  // счётчик файлов
+    setlocale(LC_ALL, "");  // С‡С‚РѕР±С‹ РїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ СЂСѓСЃСЃРєРёРјРё Р±СѓРєРІР°РјРё РІ printf
+    FILE * file;    // СЃСЋРґР° Р±СѓРґРµС‚ СЃС‡РёС‚Р°РЅ С„Р°Р№Р»
+    char path[500]; // РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ
+    int i, j;    // РїРµСЂРµРјРµРЅРЅС‹Рµ РґР»СЏ С†РёРєР»РѕРІ for
+    unsigned char buf[4] = {0, 0, 0, 0};    // Р±СѓС„РµСЂ РґР»СЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ EOCD, Central Directory Size Рё СЂР°Р·РјРµСЂР° РёРјРµРЅРё
+    unsigned char file_name[200];  // РёРјСЏ С„Р°Р№Р»Р° РІ Р°СЂС…РёРІРµ
+    char is_it_contain_zip_ = 0;	// РїСЂРёР·РЅР°Рє СЃРѕРґРµСЂР¶РёС‚ С„Р°Р№Р» zip-Р°СЂС…РёРІ РёР»Рё РЅРµС‚
+    int Central_Directory_size = 0; // СЂР°Р·РјРµСЂ С†РµРЅС‚СЂР°Р»СЊРЅРѕР№ РґРёСЂРµРєС‚РѕСЂРёРё РІ Р±Р°Р№С‚Р°С…
+    unsigned char * Central_Directory;    // РјР°СЃСЃРёРІ, СЃРѕРґРµСЂР¶Р°С‰РёР№ Central Directory
+    int file_name_size; // СЂР°Р·РјРµСЂ РёРјРµРЅРё С„Р°Р№Р»Р° РІ Р±Р°Р№С‚Р°С…
+    unsigned char CD[4] = {0x50, 0x4b, 0x01, 0x02};  // СЃРёРіРЅР°С‚СѓСЂР° РґР»СЏ Central Directory Header
+    int a = 0;  // СЃС‡С‘С‚С‡РёРє С„Р°Р№Р»РѕРІ
 
-    printf("Введите путь к файлу: ");
-    scanf("%s", path);  // вводим путь к файлу
-    file = fopen(path, "r");    // открываем файл на чтение, который находится по адресу path
-    if(file == NULL) {perror("Error") ; exit(0);}   // если на этапе открытия файла ошибка, вывести сообщение об ошибке и выйти из программы
+    printf("Р’РІРµРґРёС‚Рµ РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ: ");
+    scanf("%s", path);  // РІРІРѕРґРёРј РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ
+    file = fopen(path, "r");    // РѕС‚РєСЂС‹РІР°РµРј С„Р°Р№Р» РЅР° С‡С‚РµРЅРёРµ, РєРѕС‚РѕСЂС‹Р№ РЅР°С…РѕРґРёС‚СЃСЏ РїРѕ Р°РґСЂРµСЃСѓ path
+    if(file == NULL) {perror("Error") ; exit(0);}   // РµСЃР»Рё РЅР° СЌС‚Р°РїРµ РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р° РѕС€РёР±РєР°, РІС‹РІРµСЃС‚Рё СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ Рё РІС‹Р№С‚Рё РёР· РїСЂРѕРіСЂР°РјРјС‹
 
-    for (i = 0; i < 1000; i++)  // проходимся 1000 раз по 1 байту с конца файла в поисках EOCD
+    for (i = 0; i < 1000; i++)  // РїСЂРѕС…РѕРґРёРјСЃСЏ 1000 СЂР°Р· РїРѕ 1 Р±Р°Р№С‚Сѓ СЃ РєРѕРЅС†Р° С„Р°Р№Р»Р° РІ РїРѕРёСЃРєР°С… EOCD
     {
-        fseek(file, -i, SEEK_END);  // считываем 1, 2, 3 ... байта с конца файла, чтобы найти EOCD
-        fread(buf, 1, 4, file);     // записываем каждые 4 байта с конца файла в массив buf
+        fseek(file, -i, SEEK_END);  // СЃС‡РёС‚С‹РІР°РµРј 1, 2, 3 ... Р±Р°Р№С‚Р° СЃ РєРѕРЅС†Р° С„Р°Р№Р»Р°, С‡С‚РѕР±С‹ РЅР°Р№С‚Рё EOCD
+        fread(buf, 1, 4, file);     // Р·Р°РїРёСЃС‹РІР°РµРј РєР°Р¶РґС‹Рµ 4 Р±Р°Р№С‚Р° СЃ РєРѕРЅС†Р° С„Р°Р№Р»Р° РІ РјР°СЃСЃРёРІ buf
 
-        if( (buf[0] == 0x50) && (buf[1] == 0x4b) && (buf[2] == 0x05) && (buf[3] == 0x06) )  // сигнатура EOCD zip-файла содержит 4 подряд идущих байта
+        if( (buf[0] == 0x50) && (buf[1] == 0x4b) && (buf[2] == 0x05) && (buf[3] == 0x06) )  // СЃРёРіРЅР°С‚СѓСЂР° EOCD zip-С„Р°Р№Р»Р° СЃРѕРґРµСЂР¶РёС‚ 4 РїРѕРґСЂСЏРґ РёРґСѓС‰РёС… Р±Р°Р№С‚Р°
         {
             is_it_contain_zip_ = 1;
-            printf("Этот файл содержит zip-архив, список файлов которого:\n");
+            printf("Р­С‚РѕС‚ С„Р°Р№Р» СЃРѕРґРµСЂР¶РёС‚ zip-Р°СЂС…РёРІ, СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РєРѕС‚РѕСЂРѕРіРѕ:\n");
         }
         if(is_it_contain_zip_) {break;}
     }
 
-    if(!is_it_contain_zip_) {printf("Этот файл не содержит zip-архив\n"); return 0;}
+    if(!is_it_contain_zip_) {printf("Р­С‚РѕС‚ С„Р°Р№Р» РЅРµ СЃРѕРґРµСЂР¶РёС‚ zip-Р°СЂС…РёРІ\n"); return 0;}
 
-    fseek(file, 8, SEEK_CUR);   // относительно конца сигнатуры EOCD переходим к Central Directory size
-    fread(buf, 1, 4, file);     // читаем 4 байта, которые относятся к Central Directory size
-    Central_Directory_size = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];  // Central_Directory_size размер центральной директории
+    fseek(file, 8, SEEK_CUR);   // РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РєРѕРЅС†Р° СЃРёРіРЅР°С‚СѓСЂС‹ EOCD РїРµСЂРµС…РѕРґРёРј Рє Central Directory size
+    fread(buf, 1, 4, file);     // С‡РёС‚Р°РµРј 4 Р±Р°Р№С‚Р°, РєРѕС‚РѕСЂС‹Рµ РѕС‚РЅРѕСЃСЏС‚СЃСЏ Рє Central Directory size
+    Central_Directory_size = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];  // Central_Directory_size СЂР°Р·РјРµСЂ С†РµРЅС‚СЂР°Р»СЊРЅРѕР№ РґРёСЂРµРєС‚РѕСЂРёРё
 
-    fseek(file, -16 - Central_Directory_size, SEEK_CUR);    // сместились в начало Central Directory, в первый header
+    fseek(file, -16 - Central_Directory_size, SEEK_CUR);    // СЃРјРµСЃС‚РёР»РёСЃСЊ РІ РЅР°С‡Р°Р»Рѕ Central Directory, РІ РїРµСЂРІС‹Р№ header
 
-    Central_Directory = (unsigned char*)malloc(Central_Directory_size*sizeof(unsigned char)); // выделяем память под массив Central_Directory
+    Central_Directory = (unsigned char*)malloc(Central_Directory_size*sizeof(unsigned char)); // РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РїРѕРґ РјР°СЃСЃРёРІ Central_Directory
 
-    if(!Central_Directory) {    // выход за пределы памяти
+    if(!Central_Directory) {    // РІС‹С…РѕРґ Р·Р° РїСЂРµРґРµР»С‹ РїР°РјСЏС‚Рё
         printf("Out of memory. Press any key: ");
-        _getch();
+      //  _getch();
         exit(1);
     }
 
-    fread(Central_Directory, 1, Central_Directory_size, file);  // считываем всю Central Directory в массив Central_Directory
+    fread(Central_Directory, 1, Central_Directory_size, file);  // СЃС‡РёС‚С‹РІР°РµРј РІСЃСЋ Central Directory РІ РјР°СЃСЃРёРІ Central_Directory
 
     for (j = 0; j < Central_Directory_size; j++)
     {
@@ -62,25 +63,26 @@ void is_it_contain_zip(void)
         {
             ++a;
             memcpy(buf, Central_Directory+j+28, 2);
-            file_name_size = (buf[1] << 8) | buf[0]; // записываем размер имени файла в buf
+            file_name_size = (buf[1] << 8) | buf[0]; // Р·Р°РїРёСЃС‹РІР°РµРј СЂР°Р·РјРµСЂ РёРјРµРЅРё С„Р°Р№Р»Р° РІ buf
 
-            memset(file_name, 0, 100);  // обнуляем массив file_name, чтобы не было мусора
-            memcpy(file_name, Central_Directory+j+46, file_name_size);  // записываем в массив file_name имя файла
+            memset(file_name, 0, 100);  // РѕР±РЅСѓР»СЏРµРј РјР°СЃСЃРёРІ file_name, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ РјСѓСЃРѕСЂР°
+            memcpy(file_name, Central_Directory+j+46, file_name_size);  // Р·Р°РїРёСЃС‹РІР°РµРј РІ РјР°СЃСЃРёРІ file_name РёРјСЏ С„Р°Р№Р»Р°
             //file_1 = fopen("text", "w");
             //fwrite(file_name, 1, file_name_size, file_1 );
             //fclose(file_1);
             printf("%s \n", file_name);
         }
     }
-    if(!a) {printf("В архиве %d файлов \n", a);}  // если архив пустой
+    if(!a) {printf("Р’ Р°СЂС…РёРІРµ %d С„Р°Р№Р»РѕРІ \n", a);}  // РµСЃР»Рё Р°СЂС…РёРІ РїСѓСЃС‚РѕР№
 
-    free(Central_Directory);    // освобождаем память, выделенную под массив Central_Directory
-    fclose(file);   // закрываем файл
+    free(Central_Directory);    // РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ, РІС‹РґРµР»РµРЅРЅСѓСЋ РїРѕРґ РјР°СЃСЃРёРІ Central_Directory
+    fclose(file);   // Р·Р°РєСЂС‹РІР°РµРј С„Р°Р№Р»
     return 0;
 }
 
 int main()
 {
     is_it_contain_zip();
+    system("pause");
     return 0;
 }
